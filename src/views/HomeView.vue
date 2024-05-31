@@ -2,9 +2,11 @@
   <div class="container mt-4">
     <div class="row justify-content-center">
       <div class="col-12">
-        <TodoList v-if="isActiveTab('todo')" />
-        <InProgressList v-if="isActiveTab('inProgress')" />
-        <CompletedList v-if="isActiveTab('completed')" />
+        <TaskList
+          :title="tabTitle"
+          :status="activeTab"
+          :showAddButton="activeTab === 'todo'"
+        />
       </div>
     </div>
     <div class="row justify-content-center mt-4">
@@ -54,14 +56,24 @@
 
 <script>
 import { mapState } from "vuex";
-import TodoList from "../components/TodoList.vue";
-import InProgressList from "../components/InProgressList.vue";
-import CompletedList from "../components/CompletedList.vue";
+import TaskList from "../components/TaskList.vue";
 
 export default {
-  components: { TodoList, InProgressList, CompletedList },
+  components: { TaskList },
   computed: {
     ...mapState(["companyNews", "activeTab"]),
+    tabTitle() {
+      switch (this.activeTab) {
+        case "todo":
+          return "Todo";
+        case "inProgress":
+          return "In Progress";
+        case "completed":
+          return "Completed";
+        default:
+          return "";
+      }
+    },
   },
   methods: {
     isActiveTab(tab) {
@@ -70,7 +82,6 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchCompanyNews");
-    this.$store.dispatch("fetchTodos"); // Ensure todos are fetched once on creation
   },
 };
 </script>
